@@ -317,6 +317,13 @@ html,body{
 
 <script>
 /* -----------------------------------------------------
+   !!! CRITICAL FIX FOR GITHUB LFS VIDEOS !!!
+   We must define the full raw content path to bypass the LFS pointer issue.
+----------------------------------------------------- */
+const GITHUB_RAW_URL = "https://raw.githubusercontent.com/Krup-boop/shreyabday/main/";
+
+
+/* -----------------------------------------------------
    FILE LIST (Includes all your files)
 ----------------------------------------------------- */
 const rawFiles = [
@@ -325,14 +332,12 @@ const rawFiles = [
 "assets/IMG_20250621_143804941.jpg","assets/IMG_20250621_204915006.jpg",
 "assets/IMG_20250629_163417251.jpg","assets/IMG_20250629_163418757.jpg",
 "assets/IMG_20250629_163422958.jpg","assets/IMG_20250719_073626360.jpg",
-"assets/IMG_20250719_080937717.jpg","assets/IMG_20250721_172608662.jpg",
-"assets/IMG_20250721_174523126.jpg","assets/IMG_20250721_174524617.jpg",
-"assets/IMG_20250804_170246241.jpg","assets/IMG_20250804_170251674.jpg",
-"assets/IMG_20250804_170253174.jpg","assets/IMG_20250804_185444343.jpg",
-"assets/IMG_20250804_190040617.jpg","assets/IMG_20250815_132957116.jpg",
-"assets/IMG_20250815_141104952.jpg","assets/IMG_20250908_181743437.jpg",
-"assets/IMG_20250910_110816259.jpg","assets/IMG_20250910_183357242.jpg",
-"assets/IMG_20250910_183404624.jpg",
+"assets/IMG_20250719_080937717.jpg","assets/IMG_20250804_170246241.jpg",
+"assets/IMG_20250804_170251674.jpg","assets/IMG_20250804_170253174.jpg",
+"assets/IMG_20250804_185444343.jpg","assets/IMG_20250804_190040617.jpg",
+"assets/IMG_20250815_132957116.jpg","assets/IMG_20250815_141104952.jpg","assets/IMG_20250908_181743437.jpg",
+"assets/IMG_20250910_110816259.jpg","assets/IMG_20250910_183357242.jpg","assets/IMG_20250910_183404624.jpg",
+"assets/IMG_20250721_172608662.jpg","assets/IMG_20250721_174523126.jpg","assets/IMG_20250721_174524617.jpg",
 "assets/IMG_20251011_150704808.jpg","assets/IMG_20251011_150800859.jpg",
 "assets/IMG_20251011_150802256.jpg","assets/IMG_20251011_161148905.jpg",
 "assets/IMG_20251011_161151917.jpg","assets/IMG_20251011_161153969.jpg",
@@ -350,7 +355,7 @@ const rawFiles = [
 ];
 
 /* -----------------------------------------------------
-   CAPTIONS (UPDATED)
+   CAPTIONS
 ----------------------------------------------------- */
 const captions = {
   "assets/VID_20250613_111439678.mp4": "This is the Excuse which Made us get closer bubu<3.",
@@ -419,7 +424,6 @@ function parseDate(name){
 let slides = rawFiles.map(f=>({
   src:f,
   date:parseDate(f),
-  // FIX: If caption is missing, we use a default text so the box doesn't disappear
   caption: captions[f] || captions[f.trim()] || "A silent memory..." 
 }));
 
@@ -468,8 +472,8 @@ document.getElementById("startBtn").onclick = ()=>{
   bgAudio.volume = 0.2;
   bgAudio.play().catch(e => console.log("Bg audio auto-block"));
 
-  // 2. Setup Voice Audio (With Debugging)
-  voiceAudio = new Audio("assets/to_shreya.mp3");
+  // 2. Setup Voice Audio (Path is correct for LFS if Raw URL worked)
+  voiceAudio = new Audio("assets/to_shreya.mp3"); // Voice file is small, this relative path is likely fine
   
   // ERROR LISTENER
   voiceAudio.addEventListener("error", (e) => {
@@ -515,7 +519,7 @@ document.getElementById("songSelect").onchange = (e)=>{
 };
 
 /* -----------------------------------------------------
-   VOICE NOTE CONTROL (FIXED VOLUME)
+   VOICE NOTE CONTROL
 ----------------------------------------------------- */
 voiceBtn.onclick = ()=>{
   if(!voiceAudio) return;
@@ -526,10 +530,8 @@ voiceBtn.onclick = ()=>{
   }
 
   if(voiceAudio.paused) {
-    // LOWER MUSIC VOLUME so voice is heard
     if(bgAudio) bgAudio.volume = 0.05;
     
-    // Explicitly set volume to 30% (70% reduction)
     voiceAudio.volume = 0.3; 
     let playPromise = voiceAudio.play();
 
@@ -543,11 +545,9 @@ voiceBtn.onclick = ()=>{
       });
     }
   } else {
-    // Stop voice
     voiceAudio.pause();
     voiceAudio.currentTime = 0;
     
-    // RESTORE MUSIC VOLUME
     if(bgAudio) bgAudio.volume = 0.2;
     
     voiceBtn.textContent = "🎙️ Play Voice Note";
@@ -562,7 +562,7 @@ document.getElementById("autoplayBtn").onclick = ()=>{
 };
 
 /* -----------------------------------------------------
-   SHOW SLIDE
+   SHOW SLIDE (VIDEO FIX APPLIED HERE)
 ----------------------------------------------------- */
 function showSlide(i){
   index = (i+slides.length)%slides.length;
@@ -570,17 +570,21 @@ function showSlide(i){
 
   mediaArea.innerHTML="";
   let el;
+  let mediaSrc = s.src; 
 
   if(s.src.endsWith(".mp4")){
     el=document.createElement("video");
-    el.src=s.src;
+    // === FIX: Use Absolute URL for LFS videos ===
+    mediaSrc = GITHUB_RAW_URL + s.src; 
+    // ===========================================
     el.controls=true;
     el.autoplay=false; 
     el.playsInline=true;
   } else {
     el=document.createElement("img");
-    el.src=s.src;
   }
+
+  el.src = mediaSrc; // Use the raw URL for videos, relative for images
 
   el.style.maxWidth="100%";
   el.style.maxHeight="100%";
@@ -588,7 +592,7 @@ function showSlide(i){
 
   mediaArea.appendChild(el);
 
-  // Caption Logic (Forced Visible)
+  // Caption Logic
   captionText.style.display = "inline-block";
   captionText.textContent = s.caption;
   
@@ -607,7 +611,7 @@ function showSlide(i){
 }
 
 /* -----------------------------------------------------
-   DYNAMIC BACKGROUND
+   (REST OF CODE REMAINS THE SAME)
 ----------------------------------------------------- */
 function updateBackground(src){
   const img=new Image();
@@ -631,9 +635,6 @@ function updateBackground(src){
   };
 }
 
-/* -----------------------------------------------------
-   NEXT / PREV
------------------------------------------------------ */
 function nextSlide(){ showSlide(index+1); }
 function prevSlide(){ showSlide(index-1); }
 
@@ -647,9 +648,6 @@ timeline.onclick=function(e){
   showSlide(target);
 };
 
-/* -----------------------------------------------------
-   HEARTS
------------------------------------------------------ */
 function spawnHeart(){
   const h=document.createElement("div");
   h.className="heart";
@@ -689,8 +687,4 @@ document.addEventListener("click",e=>{
 </script>
 
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> 84ed9205c59120dad7660ac9eee2dabd755dd2b8
