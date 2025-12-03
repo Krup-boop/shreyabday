@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+<title>Happy Birthday Shreya ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Marck+Script&display=swap" rel="stylesheet">
+
+<style>
+/* ---------------------------------------
+   CORE THEME
+----------------------------------------*/
+:root{
+  --accent:#ff6fa3;
+  --muted:#c4b2c4;
+  --bg-dark:#07040a;
+  --glass:rgba(255,255,255,0.06);
+}
+
+html,body{
+  margin:0; padding:0; height:100%;
+  background:#07040a;
+  font-family:"Poppins",Arial;
+  color:#fff;
+  overflow:hidden;
+}
+
+/************ HEADER ************/
+.header{
+  width:100%; max-width:1400px; margin:0 auto;
+  padding:16px 24px; z-index:10;
+  display:flex; justify-content:center; align-items:center;
+}
+.header h1{
+  font-family:"Marck Script";
+  margin:0;
+  font-size:48px;
+  color:var(--accent);
+  text-shadow:0 8px 30px rgba(255,110,160,0.25);
+}
+.header .lead{
+  margin-top:6px; text-align:center; font-size:14px; color:var(--muted);
+}
+
+/************ VERTICAL RIBBON ************/
+.ribbon{
+  position:fixed;
+  left:10px; top:50%;
+  transform:translateY(-50%);
+  width:60px; height:280px; 
+  background:var(--glass);
+  backdrop-filter:blur(8px);
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  z-index:9999;
+  transition:width 0.3s,height 0.3s;
+  padding:12px;
+  display:flex; flex-direction:column; align-items:center;
+}
+.ribbon.expanded{
+  width:300px; height:420px; padding:18px;
+}
+.ribbon .handle{
+  writing-mode:vertical-rl; transform:rotate(180deg);
+  font-weight:bold; color:var(--muted);
+  cursor:pointer; user-select:none;
+  font-size:14px;
+}
+.ribbon .content{
+  display:none; margin-top:12px; width:100%;
+}
+.ribbon.expanded .content{ display:block; }
+
+/************ CONTROLS INSIDE RIBBON ************/
+.r-btn,.r-select{
+  width:100%; padding:10px 12px;
+  background:#120916;
+  border:none; color:#fff;
+  border-radius:12px; margin-top:8px;
+  font-size:14px; cursor:pointer;
+  transition: background 0.2s;
+}
+.r-btn:hover { background: #2a1533; }
+
+.r-btn.playing {
+  background: var(--accent);
+  color: #000;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(255, 111, 163, 0.5);
+}
+
+/************ CINEMATIC AREA ************/
+.main{
+  width:100%; max-width:1400px;
+  margin:0 auto; margin-top:0;
+  height:calc(100vh - 120px);
+  position:relative;
+}
+.cinema{
+  position:relative; inset:0;
+  height:100%; border-radius:12px;
+  border:1px solid rgba(255,255,255,0.05);
+  overflow:hidden;
+}
+.dynamic-bg{
+  position:absolute; inset:0;
+  filter:blur(50px); opacity:0.9;
+  transition:background 0.6s ease;
+  z-index:1;
+}
+.media-area{
+  position:absolute; inset:0; z-index:5;
+  display:flex; align-items:center; justify-content:center;
+}
+.media-area img,
+.media-area video{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  border-radius:6px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+/* Caption overlay inside cinema */
+.caption-overlay{
+  position:absolute;
+  left:50%;
+  bottom:26px;
+  transform:translateX(-50%);
+  z-index:10;
+  text-align:center;
+  max-width:80%;
+}
+.caption-overlay .caption{
+  background:rgba(0,0,0,0.78);
+  padding:12px 18px;
+  border-radius:12px;
+  font-weight:600; color:#fff;
+  font-size:15px;
+  display:inline-block;
+  backdrop-filter:blur(8px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.45);
+  border:1px solid rgba(255,255,255,0.15);
+}
+.caption-overlay .date{
+  font-size:12px; color:#ffb7d5; margin-top:5px;
+  text-shadow:0 2px 4px rgba(0,0,0,0.8); font-weight:bold;
+}
+
+/************ BIG GLASS ARROWS ************/
+.arrow-zone{
+  position:absolute; top:0; height:100%;
+  width:16%; z-index:20; cursor:pointer;
+}
+.arrow-left{ left:0; }
+.arrow-right{ right:0; }
+
+.arrow-btn{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:80px; height:130px; border-radius:18px;
+  background:var(--glass);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.07);
+  display:flex; align-items:center; justify-content:center;
+  transition:transform 0.2s;
+}
+.arrow-btn:hover{ transform:translateY(-50%) scale(1.07); }
+
+.arrow-btn svg{
+  width:44px; height:44px; stroke:#fff; fill:none;
+  stroke-width:2.2; opacity:0.9;
+}
+
+/************ CAPTION ************/
+/* base caption/date styles now reused in overlay */
+.caption{
+  background:rgba(0,0,0,0.75);
+  padding:14px 24px; border-radius:12px;
+  font-weight:600; color:#fff;
+  font-size:16px;
+  display:inline-block;
+  backdrop-filter:blur(8px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  border:1px solid rgba(255,255,255,0.15);
+  transition:opacity 0.3s;
+}
+.date{
+  font-size:13px; color:#ffb7d5; margin-top:6px;
+  text-shadow:0 2px 4px rgba(0,0,0,0.8); font-weight:bold;
+}
+
+/************ TIMELINE ************/
+.timeline{
+  width:80%; height:6px;
+  background:rgba(255,255,255,0.08);
+  border-radius:12px; overflow:hidden;
+  margin:8px auto;
+  cursor:pointer; position:relative;
+}
+.timeline-bar{
+  width:0%; height:100%;
+  background:linear-gradient(90deg,#ff7dbf,#ff509d);
+  transition:width 0.4s;
+}
+
+/************ START OVERLAY ************/
+#startOverlay{
+  position:fixed; inset:0; background:rgba(0,0,0,0.85);
+  display:flex; align-items:center; justify-content:center;
+  z-index:20000;
+}
+.start-card{
+  background:rgba(20, 10, 20, 0.9);
+  padding:40px; border-radius:18px;
+  border: 1px solid rgba(255,111,163,0.3);
+  backdrop-filter:blur(12px);
+  text-align:center; max-width:400px;
+  box-shadow: 0 0 50px rgba(255,111,163,0.15);
+}
+.start-btn{
+  background:linear-gradient(90deg,#ff6fa3,#ff3b78);
+  padding:14px 28px; border:none; border-radius:12px;
+  color:#fff; font-weight:bold; cursor:pointer;
+  margin-top:20px; font-size: 16px;
+  transition: transform 0.2s;
+}
+.start-btn:hover { transform: scale(1.05); }
+
+/************ HEARTS + SPARKLES ************/
+.heart{
+  position:fixed;
+  pointer-events:none;
+  color:#ff6fa3;
+  font-size:18px;
+  z-index:9999;
+}
+
+/************ MOBILE ************/
+@media(max-width:900px){
+  h1{font-size:34px;}
+  .arrow-zone{ width:25%; }
+  .arrow-btn{ width:60px; height:94px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div>
+    <h1>Happy Birthday, Shreya ❤️</h1>
+    <div class="lead">A midnight world of our memories.</div>
+  </div>
+</div>
+
+<div class="ribbon" id="ribbon">
+  <div class="handle" id="ribbonHandle">🎧 MUSIC</div>
+
+  <div class="content" id="ribbonContent">
+    <div style="font-size:13px;margin-bottom:6px;color:var(--muted)">Background Song</div>
+
+    <select id="songSelect" class="r-select">
+      <option value="assets/thousandyrs.mp3">Thousand Years (default)</option>
+      <option value="assets/yellow.mp3">Yellow</option>
+      <option value="assets/darkhaast.mp3">Darkhaast</option>
+    </select>
+
+    <button id="musicToggleBtn" class="r-btn">⏸ Pause Music</button>
+    <button id="autoplayBtn" class="r-btn">▶ Auto-play Slides</button>
+
+    <div style="margin-top:12px;font-size:13px;color:var(--muted)">Special Message</div>
+    <button id="voiceBtn" class="r-btn">🎙️ Play Voice Note</button>
+    
+    <div id="debugMsg" style="display:none; color:red; font-size:10px; margin-top:5px;"></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="cinema">
+    <div class="dynamic-bg" id="dynamicBg"></div>
+    <div class="media-area" id="mediaArea">
+      <div style="color:#bba3ba;font-weight:600;">Loading memories...</div>
+    </div>
+    <div class="caption-overlay">
+      <div class="caption" id="captionText"></div>
+      <div class="date" id="dateText"></div>
+    </div>
+    <div class="arrow-zone arrow-left" id="leftZone">
+      <div class="arrow-btn" id="leftArrow">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="arrow-zone arrow-right" id="rightZone">
+      <div class="arrow-btn" id="rightArrow">
+        <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline" id="timeline">
+    <div class="timeline-bar" id="timelineBar"></div>
+  </div>
+</div>
+
+<div id="startOverlay">
+  <div class="start-card">
+    <h2 style="font-family:'Marck Script';color:var(--accent);margin-top:0;font-size:32px;">Open at Midnight, Shreya ❤️</h2>
+    <p style="color:#ddd; line-height: 1.6;">I made this world just for you.<br>Put your brightness up and headphones on.</p>
+    <button class="start-btn" id="startBtn">Enter World</button>
+  </div>
+</div>
+
+<canvas id="paletteCanvas" width="40" height="40" style="display:none"></canvas>
+
+<script>
+/* -----------------------------------------------------
+   FILE LIST (Includes all your files)
+----------------------------------------------------- */
+const rawFiles = [
+"assets/AGC_20250910_184107456.jpg","assets/AGC_20250910_184123388.jpg",
+"assets/IMG_20250621_092913673.jpg","assets/IMG_20250621_111711637.jpg",
+"assets/IMG_20250621_143804941.jpg","assets/IMG_20250621_204915006.jpg",
+"assets/IMG_20250629_163417251.jpg","assets/IMG_20250629_163418757.jpg",
+"assets/IMG_20250629_163422958.jpg","assets/IMG_20250719_073626360.jpg",
+"assets/IMG_20250719_080937717.jpg","assets/IMG_20250721_172608662.jpg",
+"assets/IMG_20250721_174523126.jpg","assets/IMG_20250721_174524617.jpg",
+"assets/IMG_20250804_170246241.jpg","assets/IMG_20250804_170251674.jpg",
+"assets/IMG_20250804_170253174.jpg","assets/IMG_20250804_185444343.jpg",
+"assets/IMG_20250804_190040617.jpg","assets/IMG_20250815_132957116.jpg",
+"assets/IMG_20250815_141104952.jpg","assets/IMG_20250908_181743437.jpg",
+"assets/IMG_20250910_110816259.jpg","assets/IMG_20250910_183357242.jpg",
+"assets/IMG_20250910_183404624.jpg",
+"assets/IMG_20251011_150704808.jpg","assets/IMG_20251011_150800859.jpg",
+"assets/IMG_20251011_150802256.jpg","assets/IMG_20251011_161148905.jpg",
+"assets/IMG_20251011_161151917.jpg","assets/IMG_20251011_161153969.jpg",
+
+"assets/VID_20250613_111439678.mp4","assets/VID_20250621_115515839.mp4",
+"assets/VID_20250719_065623633.mp4","assets/VID_20250719_104022083.mp4",
+"assets/VID_20250719_105127799.mp4","assets/VID_20250719_105147573.mp4",
+"assets/VID_20250801_185802369.mp4","assets/VID_20250815_132957490.mp4",
+"assets/VID_20250823_170902071.mp4","assets/VID_20250910_143906454.mp4",
+"assets/VID_20250910_183500455.mp4","assets/VID_20250910_183600099.mp4",
+"assets/VID_20250910_183605891.mp4","assets/VID_20250910_183718320.mp4",
+"assets/VID_20250910_183801347.mp4","assets/VID_20250910_183839456.mp4",
+"assets/VID_20251005_101712787.mp4","assets/VID_20251011_094518787.mp4",
+"assets/VID_20251011_114615267.mp4","assets/VID_20251011_150156938.mp4"
+];
+
+/* -----------------------------------------------------
+   CAPTIONS (UPDATED)
+----------------------------------------------------- */
+const captions = {
+  "assets/VID_20250613_111439678.mp4": "This is the Excuse which Made us get closer bubu<3.",
+  "assets/IMG_20250621_092913673.jpg": "The first time we ever held hands. My Core memoryy",
+  "assets/IMG_20250621_111711637.jpg": "I want you to not only stretch your arms but also your wings, flyy highhh in the skyyy and win every silent battle",
+  "assets/IMG_20250621_143804941.jpg": "Our first Lunch date, it was cuteee after that tiring day. I love your smile gosh",
+  "assets/IMG_20250621_204915006.jpg": "AND I DIDNT EXPECT THIS SURPRISE GOSHHH I STILLL LOVE THIS SKETCH WITH ALL OF MY HEART",
+  "assets/VID_20250621_115515839.mp4": "HEHE \"Hi kids 👋\"",
+  "assets/IMG_20250629_163417251.jpg": "ayee look at you cheeky cute smilee",
+  "assets/IMG_20250629_163418757.jpg": "awwwww look at that cutee face",
+  "assets/IMG_20250629_163422958.jpg": "dont hide your smileeeeeee ;) (shhh secret is it makes it even more cuter, you are not helping the situation)",
+  "assets/IMG_20250719_073626360.jpg": "Loved that trip for the beach cleaning with you",
+  "assets/IMG_20250719_080937717.jpg": "I dont smile for the cameras, i only smile for you",
+  "assets/VID_20250719_065623633.mp4": "Recording you secretly is my Favorite hobby",
+  "assets/VID_20250719_105127799.mp4": "To lay my head on your shoulder is heaven",
+  "assets/VID_20250719_105147573.mp4": "Where are you looking at sweetiee",
+  "assets/IMG_20250721_172608662.jpg": "This picture is simply cute... Idk.. to face you. to be close to you, to do something cute with you. i love all that",
+  "assets/IMG_20250721_174523126.jpg": "Look at my gorgeous cuteeeeeee princessss",
+  "assets/IMG_20250721_174524617.jpg": "heheheeee stuppppiiddddddd kiddduuuuu",
+  "assets/VID_20250801_185802369.mp4": "PFFFFFTTTTT Remember this day? 😏😳🤭",
+  "assets/IMG_20250804_170246241.jpg": "Our first study sesh!!!!!!!! We actually had our actual clg experience together atleastttt :>",
+  "assets/IMG_20250804_170251674.jpg": "Still kept that affidavit with you?? hmphh??!!!",
+  "assets/IMG_20250804_170253174.jpg": "kiti bagtayyy ayeeeee, mala jast doubt hota tujhya peksha 😭🙏",
+  "assets/IMG_20250804_185444343.jpg": "My baby has a sweet tooth, she just doesnt wanna admit it!",
+  "assets/IMG_20250804_190040617.jpg": "I promise to share my half of food with you, if it adds a smile to your face",
+  "assets/IMG_20250815_132957116.jpg": "Look at your hair... those water droplets. the scene the everything, and You....",
+  "assets/IMG_20250815_141104952.jpg": "That mountain bloomed and shined bright green with your visit ✨",
+  "assets/VID_20250823_170902071.mp4": "Thankyou auto uncle for not making this soft situation awkward, I love being close to you soooo much shreya",
+  "assets/IMG_20250908_181743437.jpg": "NOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMMNOM NOMMMM",
+  "assets/AGC_20250910_184123388.jpg": "Maybe my whole purpose of coming to mumbai was this... I just wasnt aware",
+  "assets/IMG_20250910_110816259.jpg": "Flowers bloom for you",
+  "assets/IMG_20250910_183357242.jpg": "Oceanss softly waves you hii",
+  "assets/IMG_20250910_183404624.jpg": "Sun shys away when you smile",
+  "assets/VID_20250910_143906454.mp4": "Nom nom nommm part 2222",
+  "assets/VID_20250910_183500455.mp4": "I love your i will fix this attitude",
+  "assets/VID_20250910_183600099.mp4": "Matt chupao na apka chehra meri jaaan",
+  "assets/VID_20250910_183605891.mp4": "Heheheee A phool and a foool 😝",
+  "assets/VID_20250910_183718320.mp4": "\"Naiii  Naii\" - shreyaaaa",
+  "assets/VID_20250910_183801347.mp4": "To sing for you is my favorite pass timeee",
+  "assets/VID_20250910_183839456.mp4": "Aur tummmm 🤭✨",
+  "assets/VID_20251005_101712787.mp4": "Remember this hugeee boquet :>>>",
+  "assets/IMG_20251011_150704808.jpg": "Pout queeeennnnn 💅✨",
+  "assets/IMG_20251011_150800859.jpg": "Loveeee you bubuuu",
+  "assets/IMG_20251011_161148905.jpg": "Smile 1111",
+  "assets/IMG_20251011_161151917.jpg": "Smile 2222",
+  "assets/IMG_20251011_161153969.jpg": "smile 30000000",
+  "assets/VID_20251011_094518787.mp4": "DFKSFLKJKDSFJKSLJDFKJKSJDFJKSLDFJLJKLDSFJ LOLLL",
+  "assets/VID_20251011_114615267.mp4": "TU pan ek mothi maanzarrrr",
+  "assets/VID_20251011_150156938.mp4": "\"wowowowowww\" - shreyaaa"
+};
+
+
+/* -----------------------------------------------------
+   PARSE DATES
+----------------------------------------------------- */
+function parseDate(name){
+  const m = name.match(/(\d{8})/);
+  if(!m) return null;
+  const d = m[1];
+  return new Date(+d.slice(0,4), +d.slice(4,6)-1, +d.slice(6,8));
+}
+
+/* -----------------------------------------------------
+   BUILD SLIDES (sorted)
+----------------------------------------------------- */
+let slides = rawFiles.map(f=>({
+  src:f,
+  date:parseDate(f),
+  // FIX: If caption is missing, we use a default text so the box doesn't disappear
+  caption: captions[f] || captions[f.trim()] || "A silent memory..." 
+}));
+
+slides.sort((a,b)=>{
+  if(a.date&&b.date) return a.date-b.date;
+  if(a.date&&!b.date) return -1;
+  if(!a.date&&b.date) return 1;
+  return 0;
+});
+
+
+/* -----------------------------------------------------
+   DOM
+----------------------------------------------------- */
+const mediaArea = document.getElementById("mediaArea");
+const captionText = document.getElementById("captionText");
+const dateText = document.getElementById("dateText");
+const dynamicBg = document.getElementById("dynamicBg");
+const timelineBar = document.getElementById("timelineBar");
+const timeline = document.getElementById("timeline");
+const musicToggleBtn = document.getElementById("musicToggleBtn");
+const voiceBtn = document.getElementById("voiceBtn");
+const debugMsg = document.getElementById("debugMsg");
+
+let index = 0;
+let bgAudio = null;
+let voiceAudio = null;
+let autoplay = false;
+let voiceError = false;
+
+/* -----------------------------------------------------
+   RIBBON LOGIC
+----------------------------------------------------- */
+const ribbon = document.getElementById("ribbon");
+document.getElementById("ribbonHandle").onclick = ()=> ribbon.classList.toggle("expanded");
+
+/* -----------------------------------------------------
+   START BUTTON
+----------------------------------------------------- */
+document.getElementById("startBtn").onclick = ()=>{
+  document.getElementById("startOverlay").style.display="none";
+
+  // 1. Setup Background Music
+  bgAudio = new Audio(document.getElementById("songSelect").value);
+  bgAudio.loop = true;
+  bgAudio.volume = 0.2;
+  bgAudio.play().catch(e => console.log("Bg audio auto-block"));
+
+  // 2. Setup Voice Audio (With Debugging)
+  voiceAudio = new Audio("assets/to_shreya.mp3");
+  
+  // ERROR LISTENER
+  voiceAudio.addEventListener("error", (e) => {
+    voiceError = true;
+    console.error("Voice Error:", e);
+    debugMsg.style.display = "block";
+    debugMsg.innerText = "Error: Voice file not found in 'assets/to_shreya.mp3'";
+    voiceBtn.textContent = "⚠️ Error (See Ribbon)";
+    voiceBtn.style.background = "#500";
+  });
+
+  // END LISTENER
+  voiceAudio.onended = () => {
+    voiceBtn.textContent = "🎙️ Play Voice Note";
+    voiceBtn.classList.remove("playing");
+    if(bgAudio) {
+      bgAudio.volume = 0.2; // Restore music volume
+    }
+  };
+
+  showSlide(0);
+};
+
+/* -----------------------------------------------------
+   MUSIC CONTROLS
+----------------------------------------------------- */
+musicToggleBtn.onclick = ()=>{
+  if(!bgAudio) return;
+  if(bgAudio.paused){
+    bgAudio.play();
+    musicToggleBtn.textContent = "⏸ Pause Music";
+  } else {
+    bgAudio.pause();
+    musicToggleBtn.textContent = "▶ Resume Music";
+  }
+};
+
+document.getElementById("songSelect").onchange = (e)=>{
+  if(!bgAudio) return;
+  bgAudio.src=e.target.value;
+  bgAudio.play().catch(()=>{});
+  musicToggleBtn.textContent = "⏸ Pause Music";
+};
+
+/* -----------------------------------------------------
+   VOICE NOTE CONTROL (FIXED VOLUME)
+----------------------------------------------------- */
+voiceBtn.onclick = ()=>{
+  if(!voiceAudio) return;
+
+  if(voiceError){
+    alert("I cannot find the voice file!\n\n1. Make sure the file is named 'to_shreya.mp3'\n2. Make sure it is inside the 'assets' folder.\n3. Make sure it is an mp3.");
+    return;
+  }
+
+  if(voiceAudio.paused) {
+    // LOWER MUSIC VOLUME so voice is heard
+    if(bgAudio) bgAudio.volume = 0.05;
+    
+    // Explicitly set volume to 30% (70% reduction)
+    voiceAudio.volume = 0.3; 
+    let playPromise = voiceAudio.play();
+
+    if (playPromise !== undefined) {
+      playPromise.then(_ => {
+        voiceBtn.textContent = "⏹ Stop Voice";
+        voiceBtn.classList.add("playing");
+      })
+      .catch(error => {
+        alert("Browser blocked audio. Please click again.");
+      });
+    }
+  } else {
+    // Stop voice
+    voiceAudio.pause();
+    voiceAudio.currentTime = 0;
+    
+    // RESTORE MUSIC VOLUME
+    if(bgAudio) bgAudio.volume = 0.2;
+    
+    voiceBtn.textContent = "🎙️ Play Voice Note";
+    voiceBtn.classList.remove("playing");
+  }
+};
+
+document.getElementById("autoplayBtn").onclick = ()=>{
+  autoplay=!autoplay;
+  document.getElementById("autoplayBtn").textContent = autoplay?"⏸ Stop Auto":"▶ Auto-play Slides";
+  if(autoplay) nextSlide();
+};
+
+/* -----------------------------------------------------
+   SHOW SLIDE
+----------------------------------------------------- */
+function showSlide(i){
+  index = (i+slides.length)%slides.length;
+  const s = slides[index];
+
+  mediaArea.innerHTML="";
+  let el;
+
+  if(s.src.endsWith(".mp4")){
+    el=document.createElement("video");
+    el.src=s.src;
+    el.controls=true;
+    el.autoplay=false; 
+    el.playsInline=true;
+  } else {
+    el=document.createElement("img");
+    el.src=s.src;
+  }
+
+  el.style.maxWidth="100%";
+  el.style.maxHeight="100%";
+  el.style.objectFit="contain";
+
+  mediaArea.appendChild(el);
+
+  // Caption Logic (Forced Visible)
+  captionText.style.display = "inline-block";
+  captionText.textContent = s.caption;
+  
+  if(s.date){
+    const o={year:"numeric",month:"short",day:"numeric"};
+    dateText.textContent=s.date.toLocaleDateString(undefined,o);
+  } else dateText.textContent="";
+
+  timelineBar.style.width = ((index+1)/slides.length*100)+"%";
+  updateBackground(s.src);
+
+  if(autoplay){
+    clearTimeout(window.__auto);
+    window.__auto=setTimeout(nextSlide,5000);
+  }
+}
+
+/* -----------------------------------------------------
+   DYNAMIC BACKGROUND
+----------------------------------------------------- */
+function updateBackground(src){
+  const img=new Image();
+  img.crossOrigin="anonymous";
+  img.src=src;
+  img.onload=()=>{
+    const cv=document.getElementById("paletteCanvas");
+    const ctx=cv.getContext("2d");
+    ctx.drawImage(img,0,0,40,40);
+    const data=ctx.getImageData(0,0,40,40).data;
+    
+    let r=0,g=0,b=0,c=0;
+    for(let i=0;i<data.length;i+=16){
+      r+=data[i]; g+=data[i+1]; b+=data[i+2];
+      c++;
+    }
+    r=Math.floor(r/c); g=Math.floor(g/c); b=Math.floor(b/c);
+
+    dynamicBg.style.background=
+      `radial-gradient(circle at 50% 30%, rgba(${r},${g},${b},0.46), rgba(5,0,10,0.9))`;
+  };
+}
+
+/* -----------------------------------------------------
+   NEXT / PREV
+----------------------------------------------------- */
+function nextSlide(){ showSlide(index+1); }
+function prevSlide(){ showSlide(index-1); }
+
+document.getElementById("leftZone").onclick = prevSlide;
+document.getElementById("rightZone").onclick = nextSlide;
+
+timeline.onclick=function(e){
+  const rect=timeline.getBoundingClientRect();
+  const ratio=(e.clientX-rect.left)/rect.width;
+  const target=Math.floor(ratio*(slides.length));
+  showSlide(target);
+};
+
+/* -----------------------------------------------------
+   HEARTS
+----------------------------------------------------- */
+function spawnHeart(){
+  const h=document.createElement("div");
+  h.className="heart";
+  h.textContent="❤";
+  h.style.left=(Math.random()*90)+"vw";
+  h.style.top="-5vh";
+  h.style.fontSize=(14+Math.random()*26)+"px";
+  document.body.append(h);
+
+  h.animate([
+    { transform:"translateY(0)",opacity:1 },
+    { transform:"translateY(110vh)",opacity:0 }
+  ],{ duration:6000, easing:"linear" });
+
+  setTimeout(()=>h.remove(),6000);
+}
+setInterval(spawnHeart,1100);
+
+document.addEventListener("click",e=>{
+  for(let i=0;i<14;i++){
+    const s=document.createElement("div");
+    s.textContent="✨";
+    s.style.position="fixed";
+    s.style.left=(e.clientX+(Math.random()*60-30))+"px";
+    s.style.top=(e.clientY+(Math.random()*60-30))+"px";
+    s.style.fontSize=(10+Math.random()*14)+"px";
+    s.style.zIndex=9999;
+    document.body.append(s);
+    setTimeout(()=>{
+      s.style.transition="all 0.9s";
+      s.style.transform="translateY(-50px)";
+      s.style.opacity=0;
+    },20);
+    setTimeout(()=>s.remove(),1000);
+  }
+});
+</script>
+
+</body>
+<<<<<<< HEAD
+</html>
+=======
+</html>
+>>>>>>> 84ed9205c59120dad7660ac9eee2dabd755dd2b8
